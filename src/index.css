@@ -1,0 +1,352 @@
+:root {
+  color-scheme: light;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  color: #172033;
+  background: #eef4ff;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --blue: #2563eb;
+  --blue-dark: #1d4ed8;
+  --surface: #ffffff;
+  --surface-soft: #f8fbff;
+  --line: #dbe6f7;
+  --muted: #667085;
+  --danger: #dc2626;
+  --shadow: 0 18px 45px rgba(29, 78, 216, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.16), transparent 34rem),
+    linear-gradient(180deg, #eef4ff 0%, #f8fbff 100%);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  min-height: 44px;
+  border: 0;
+  cursor: pointer;
+}
+
+.app-shell {
+  width: min(100%, 760px);
+  margin: 0 auto;
+  padding: 18px;
+}
+
+.hero-card {
+  margin: 0 0 16px;
+  padding: 24px;
+  color: #ffffff;
+  border-radius: 28px;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.98), rgba(14, 165, 233, 0.92)),
+    #2563eb;
+  box-shadow: var(--shadow);
+}
+
+.hero-topline {
+  width: fit-content;
+  margin-bottom: 14px;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.hero-heading-row {
+  display: grid;
+  gap: 18px;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 7vw, 3.4rem);
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+}
+
+.hero-card p {
+  max-width: 520px;
+  margin: 12px 0 0;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.55;
+}
+
+.hero-badge {
+  width: fit-content;
+  align-self: end;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  font-size: 0.84rem;
+  font-weight: 700;
+  backdrop-filter: blur(14px);
+}
+
+.panel,
+.stat-card,
+.note-card,
+.empty-state {
+  border: 1px solid rgba(219, 230, 247, 0.9);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(10px);
+}
+
+.panel {
+  margin-bottom: 14px;
+  padding: 14px;
+  border-radius: 24px;
+}
+
+.note-form label {
+  display: block;
+  margin: 0 0 8px;
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.add-row {
+  display: flex;
+  gap: 10px;
+}
+
+.add-row input,
+.search-input {
+  width: 100%;
+  min-height: 52px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  outline: none;
+  background: #ffffff;
+  color: #172033;
+  padding: 0 15px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.add-row input:focus,
+.search-input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
+}
+
+.add-row button {
+  flex: 0 0 auto;
+  padding: 0 18px;
+  border-radius: 18px;
+  background: var(--blue);
+  color: #ffffff;
+  font-weight: 800;
+  box-shadow: 0 12px 22px rgba(37, 99, 235, 0.22);
+}
+
+.add-row button:active,
+.filter-row button:active,
+.note-actions button:active,
+.complete-button:active {
+  transform: translateY(1px);
+}
+
+.cancel-edit {
+  margin-top: 10px;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 14px;
+  background: #eff6ff;
+  color: var(--blue-dark);
+  font-weight: 800;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.stat-card {
+  min-height: 86px;
+  border-radius: 22px;
+  padding: 14px;
+}
+
+.stat-card span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.stat-card strong {
+  display: block;
+  margin-top: 8px;
+  color: #0f172a;
+  font-size: 1.8rem;
+  letter-spacing: -0.04em;
+}
+
+.controls-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.filter-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 4px;
+  border-radius: 18px;
+  background: var(--surface-soft);
+}
+
+.filter-row button {
+  border-radius: 14px;
+  background: transparent;
+  color: #475569;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.filter-row button.active {
+  background: #ffffff;
+  color: var(--blue-dark);
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.08);
+}
+
+.notes-list {
+  display: grid;
+  gap: 10px;
+}
+
+.note-card {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  border-radius: 24px;
+}
+
+.complete-button {
+  width: 44px;
+  height: 44px;
+  border: 2px solid #bfdbfe;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: #ffffff;
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.note-card.is-completed .complete-button {
+  border-color: #22c55e;
+  background: #22c55e;
+}
+
+.note-text {
+  margin: 0;
+  color: #172033;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.note-card.is-completed .note-text {
+  color: #94a3b8;
+  text-decoration: line-through;
+}
+
+.note-actions {
+  grid-column: 2;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.note-actions button {
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 14px;
+  background: #eff6ff;
+  color: var(--blue-dark);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.note-actions button.danger {
+  background: #fff1f2;
+  color: var(--danger);
+}
+
+.empty-state {
+  padding: 28px 20px;
+  text-align: center;
+  border-radius: 24px;
+}
+
+.empty-icon {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 10px;
+  place-items: center;
+  border-radius: 18px;
+  background: #eff6ff;
+  color: var(--blue);
+  font-size: 1.6rem;
+  font-weight: 900;
+}
+
+.empty-state h2 {
+  margin: 0 0 6px;
+  color: #172033;
+  font-size: 1.05rem;
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--muted);
+}
+
+@media (min-width: 680px) {
+  .app-shell {
+    padding: 34px 24px;
+  }
+
+  .hero-heading-row {
+    grid-template-columns: 1fr auto;
+    align-items: end;
+  }
+
+  .note-card {
+    grid-template-columns: 44px 1fr auto;
+  }
+
+  .note-actions {
+    grid-column: auto;
+  }
+}

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="ملاحظاتي">
+  <rect width="512" height="512" rx="120" fill="#20231f"/>
+  <rect x="118" y="82" width="276" height="348" rx="54" fill="#fffefb"/>
+  <rect x="164" y="82" width="184" height="22" rx="11" fill="#e4ad3f"/>
+  <path d="M177 190h158M177 248h158M177 306h102" fill="none" stroke="#bcc0b9" stroke-width="22" stroke-linecap="round"/>
+  <circle cx="347" cy="357" r="55" fill="#e4ad3f"/>
+  <path d="M347 329v56M319 357h56" fill="none" stroke="#20231f" stroke-width="17" stroke-linecap="round"/>
+</svg>

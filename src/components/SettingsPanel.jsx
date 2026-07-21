@@ -91,7 +91,7 @@ export default function SettingsPanel({ notes, folders, settings, onSettings, on
         <div className="storage-card"><HardDrive /><div><strong>{bytesLabel(storage.used)} مستخدمة</strong><small>من حصة تقريبية {bytesLabel(storage.quota)} · وسائط {bytesLabel(storage.media)}</small><div className="storage-meter"><span style={{ width: `${percentage}%` }} /></div></div></div>
       </div>
 
-      <div className="about-card"><Info /><div><strong>ملاحظاتي {APP_VERSION}</strong><p>تطبيق ملاحظات عربي أولاً. التخزين محلي، والنسخ الصوتي فقط يُرسل خارج الجهاز عند طلبك.</p></div></div>
+      <div className="about-card"><Info /><div><strong>ملاحظاتي {APP_VERSION}</strong><p>تطبيق ملاحظات عربي أولاً. تبقى الملاحظات والتسجيلات على جهازك، ويعمل النسخ الصوتي محلياً دون رفع الصوت.</p></div></div>
 
       {importPreview && (
         <Modal title="معاينة الاستيراد" description={`تتضمن النسخة ${importPreview.notes.length} ملاحظة و${importPreview.folders.length} مجلداً.`} onClose={() => setImportPreview(null)}>

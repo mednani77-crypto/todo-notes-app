@@ -292,7 +292,7 @@ export default function App() {
       <Sidebar currentView={currentView} counts={counts} onNavigate={navigate} />
 
       <div className="workspace-shell">
-        {!online && <div className="offline-banner" role="status"><WifiOff /> أنت دون اتصال. الملاحظات المحلية تعمل، لكن النسخ الصوتي يحتاج إلى الإنترنت.</div>}
+        {!online && <div className="offline-banner" role="status"><WifiOff /> أنت دون اتصال. الملاحظات المحلية تعمل؛ النسخ الصوتي يعمل إذا كان نموذج Whisper قد نُزّل مسبقاً.</div>}
         {updateRegistration && <div className="update-banner" role="status"><span>يتوفر إصدار جديد من التطبيق.</span><button type="button" onClick={installUpdate}>تحديث الآن</button><button type="button" className="icon-only" onClick={() => setUpdateRegistration(null)} aria-label="لاحقاً"><X /></button></div>}
         {workspace.storageError && (
           <div className="storage-warning" role="alert">

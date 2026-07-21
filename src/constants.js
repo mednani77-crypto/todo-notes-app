@@ -1,4 +1,4 @@
-export const APP_VERSION = '3.0.0';
+export const APP_VERSION = '3.1.0';
 export const SCHEMA_VERSION = 3;
 
 export const STORAGE_KEYS = {

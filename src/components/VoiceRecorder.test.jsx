@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { transcribeAudioLocally } from '../lib/localTranscription.js';
 import VoiceRecorder from './VoiceRecorder.jsx';
+
+vi.mock('../lib/localTranscription.js', () => ({
+  transcribeAudioLocally: vi.fn(),
+}));
 
 class MockMediaRecorder {
   static isTypeSupported() { return true; }
@@ -22,7 +27,7 @@ class MockMediaRecorder {
 
 describe('VoiceRecorder', () => {
   beforeEach(() => {
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
     vi.stubGlobal('MediaRecorder', MockMediaRecorder);
     Object.defineProperty(navigator, 'mediaDevices', {
       configurable: true,
@@ -49,11 +54,17 @@ describe('VoiceRecorder', () => {
     expect(await screen.findByLabelText('حذف التسجيل')).toBeInTheDocument();
   });
 
-  it('transcribes successfully and inserts editable Arabic text at the cursor', async () => {
+  it('shows local model progress and inserts editable Arabic text at the cursor', async () => {
     const user = userEvent.setup();
     const onInsert = vi.fn();
     const onKeepAudio = vi.fn().mockResolvedValue('audio-id');
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({ text: 'نص عربي قابل للتحرير.' }) }));
+    transcribeAudioLocally.mockImplementation(async (_blob, language, onProgress) => {
+      expect(language).toBe('auto');
+      onProgress({ stage: 'loading-model', progress: 42 });
+      onProgress({ stage: 'transcribing', progress: null });
+      return 'نص عربي قابل للتحرير.';
+    });
+
     render(<VoiceRecorder onInsert={onInsert} onKeepAudio={onKeepAudio} />);
     await makeRecording(user);
     await user.click(screen.getByRole('button', { name: 'تحويل إلى نص' }));
@@ -66,20 +77,20 @@ describe('VoiceRecorder', () => {
     expect(onKeepAudio).toHaveBeenCalledOnce();
   });
 
-  it('keeps a failed recording and retries transcription successfully', async () => {
+  it('keeps a failed recording and retries local transcription successfully', async () => {
     const user = userEvent.setup();
-    const fetchMock = vi.fn()
-      .mockResolvedValueOnce({ ok: false, json: async () => ({ message: 'تعذر النسخ مؤقتاً.' }) })
-      .mockResolvedValueOnce({ ok: true, json: async () => ({ text: 'Retry worked' }) });
-    vi.stubGlobal('fetch', fetchMock);
+    transcribeAudioLocally
+      .mockRejectedValueOnce(new Error('تعذر تشغيل النموذج محلياً.'))
+      .mockResolvedValueOnce('نجحت إعادة المحاولة');
+
     render(<VoiceRecorder onInsert={vi.fn()} onKeepAudio={vi.fn()} />);
     await makeRecording(user);
     await user.click(screen.getByRole('button', { name: 'تحويل إلى نص' }));
-    expect(await screen.findByRole('alert')).toHaveTextContent('تعذر النسخ مؤقتاً');
+    expect(await screen.findByRole('alert')).toHaveTextContent('تعذر تشغيل النموذج محلياً');
     expect(screen.getByLabelText('حذف التسجيل')).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'إعادة محاولة النسخ' }));
-    expect(await screen.findByDisplayValue('Retry worked')).toBeInTheDocument();
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(await screen.findByDisplayValue('نجحت إعادة المحاولة')).toBeInTheDocument();
+    expect(transcribeAudioLocally).toHaveBeenCalledTimes(2);
   });
 
   it('explains microphone permission denial clearly', async () => {

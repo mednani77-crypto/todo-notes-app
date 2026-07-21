@@ -1,4 +1,4 @@
-const CACHE_NAME = 'todo-notes-shell-v3';
+const CACHE_NAME = 'todo-notes-shell-v4';
 const APP_SHELL = ['/', '/index.html', '/manifest.webmanifest', '/icons/icon.svg', '/icons/icon-maskable.svg'];
 
 self.addEventListener('install', (event) => {

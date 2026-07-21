@@ -9,6 +9,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { AUDIO_LIMITS } from '../constants.js';
+import { transcribeAudioLocally } from '../lib/localTranscription.js';
 import { bytesLabel } from '../lib/noteUtils.js';
 
 const STATE_LABELS = {
@@ -17,7 +18,8 @@ const STATE_LABELS = {
   recording: 'جارٍ التسجيل',
   paused: 'التسجيل متوقف مؤقتاً',
   ready: 'التسجيل جاهز للمعاينة',
-  uploading: 'جارٍ رفع التسجيل بأمان…',
+  preparing: 'جارٍ تجهيز الصوت محلياً…',
+  'loading-model': 'جارٍ تنزيل نموذج النسخ…',
   transcribing: 'جارٍ تحويل الصوت إلى نص…',
   completed: 'اكتمل النسخ',
   failed: 'فشل النسخ — التسجيل محفوظ',
@@ -42,6 +44,7 @@ export default function VoiceRecorder({ onInsert, onKeepAudio }) {
   const [language, setLanguage] = useState('auto');
   const [keepAudio, setKeepAudio] = useState(true);
   const [transcript, setTranscript] = useState('');
+  const [modelProgress, setModelProgress] = useState(null);
   const [message, setMessage] = useState('');
   const recorderRef = useRef(null);
   const streamRef = useRef(null);
@@ -142,6 +145,7 @@ export default function VoiceRecorder({ onInsert, onKeepAudio }) {
     setAudioUrl('');
     setAudioBlob(null);
     setTranscript('');
+    setModelProgress(null);
     setMessage('');
     setSeconds(0);
     setStatus('idle');
@@ -155,17 +159,15 @@ export default function VoiceRecorder({ onInsert, onKeepAudio }) {
       setMessage('حجم التسجيل أكبر من 20 MB. سجّل مقطعاً أقصر.');
       return;
     }
-    setStatus('uploading');
+    setStatus('preparing');
+    setModelProgress(null);
     setMessage('');
-    const form = new FormData();
-    form.append('audio', audioBlob, `recording-${Date.now()}.${audioBlob.type.includes('mp4') ? 'm4a' : 'webm'}`);
-    form.append('language', language);
     try {
-      queueMicrotask(() => setStatus('transcribing'));
-      const response = await fetch('/api/transcriptions', { method: 'POST', body: form });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok || typeof payload.text !== 'string') throw new Error(payload.message || 'تعذر نسخ التسجيل.');
-      setTranscript(payload.text);
+      const text = await transcribeAudioLocally(audioBlob, language, ({ stage, progress }) => {
+        setStatus(stage);
+        if (stage === 'loading-model' && progress !== null) setModelProgress(progress);
+      });
+      setTranscript(text);
       setStatus('completed');
       if (keepAudio && !savedAudioIdRef.current) {
         savedAudioIdRef.current = await onKeepAudio?.(audioBlob, seconds);
@@ -183,7 +185,7 @@ export default function VoiceRecorder({ onInsert, onKeepAudio }) {
     if (!keepAudio) clearRecording();
   }
 
-  const busy = status === 'uploading' || status === 'transcribing';
+  const busy = ['preparing', 'loading-model', 'transcribing'].includes(status);
   const canRecord = ['idle', 'failed'].includes(status) && !audioBlob;
 
   return (
@@ -226,7 +228,13 @@ export default function VoiceRecorder({ onInsert, onKeepAudio }) {
             </select>
           </label>
           <label className="check-label"><input type="checkbox" checked={keepAudio} onChange={(event) => setKeepAudio(event.target.checked)} /> الاحتفاظ بالتسجيل بعد النسخ</label>
-          <p className="privacy-note">سيُرسل الصوت إلى مزود OpenAI عبر خادم التطبيق لإجراء النسخ. لا يُكتب التسجيل في ملفات مؤقتة على الخادم.</p>
+          <p className="privacy-note">النسخ مجاني ويجري على جهازك؛ لا يُرفع التسجيل إلى خادم. تُنزّل ملفات نموذج Whisper من Hugging Face عند أول استخدام ثم يحفظها المتصفح مؤقتاً.</p>
+          {status === 'loading-model' && modelProgress !== null && (
+            <div className="model-progress" aria-label={`تنزيل نموذج النسخ ${modelProgress}%`}>
+              <progress max="100" value={modelProgress} />
+              <span>{modelProgress}%</span>
+            </div>
+          )}
           <button className="transcribe-button" type="button" onClick={transcribe} disabled={busy}>
             {busy ? <RefreshCw className="spin" /> : status === 'failed' ? <RotateCcw /> : <Mic />}
             {busy ? STATE_LABELS[status] : status === 'failed' ? 'إعادة محاولة النسخ' : 'تحويل إلى نص'}
@@ -246,7 +254,7 @@ export default function VoiceRecorder({ onInsert, onKeepAudio }) {
       )}
 
       {message && <p className="inline-error" role="alert">{message}</p>}
-      <p className="voice-limits">الحد الأقصى: 5 دقائق أو 20 MB. تعتمد العربية والإنجليزية والصومالية والأمهرية على دعم مزود النسخ.</p>
+      <p className="voice-limits">الحد الأقصى: 5 دقائق أو 20 MB. العربية والإنجليزية مدعومتان؛ تتفاوت دقة الصومالية والأمهرية حسب وضوح الصوت والجهاز. يلزم الإنترنت لتنزيل النموذج في المرة الأولى.</p>
     </section>
   );
 }

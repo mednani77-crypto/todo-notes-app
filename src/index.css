@@ -374,6 +374,8 @@ select, .filters-panel select, .option-grid select, .settings-row select, .note-
 .transcription-options > label:not(.check-label) { display: grid; gap: 6px; color: var(--muted); font-size: 0.72rem; font-weight: 750; }
 .check-label { display: flex; align-items: center; gap: 8px; color: var(--ink-soft); font-size: 0.76rem; }
 .privacy-note, .voice-limits { margin: 0; color: var(--muted); font-size: 0.68rem; line-height: 1.65; }
+.model-progress { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 9px; color: var(--muted); font-size: 0.7rem; font-variant-numeric: tabular-nums; }
+.model-progress progress { width: 100%; height: 7px; overflow: hidden; border: 0; border-radius: 999px; accent-color: var(--accent); }
 .transcript-result { display: grid; gap: 8px; margin-top: 14px; }
 .transcript-result label { color: var(--success); font-size: 0.74rem; font-weight: 800; }
 .transcript-result textarea { width: 100%; padding: 12px; resize: vertical; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); line-height: 1.7; unicode-bidi: plaintext; }
